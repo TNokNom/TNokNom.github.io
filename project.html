@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project Title — Tomide Abidakun</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:        #22191e;
+    --bg2:       #1a1316;
+    --bg3:       #2a1a1f;
+    --border:    rgba(234,170,102,0.25);
+    --border-hi: rgba(234,170,102,0.55);
+    --green:     #ea6962;
+    --teal:      #00a370;
+    --amber:     #f0a500;
+    --text:      #ffdab9;
+    --text-dim:  #8a7a72;
+    --text-hi:   #fff8f0;
+    --mono:      'IBM Plex Mono', monospace;
+    --sans:      'IBM Plex Sans', sans-serif;
+    --nav-w:     260px;
+    --content-max: 780px;
+  }
+
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  a { color: var(--teal); text-decoration: none; }
+  a:hover { color: var(--green); text-decoration: underline; }
+
+  /* ── TOP BAR ── */
+  .topbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+    height: 52px;
+    background: rgba(26,19,22,0.94);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center;
+    padding: 0 1.5rem;
+    gap: 1rem;
+  }
+  .topbar-brand {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--green);
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+  .topbar-sep { color: var(--border-hi); font-size: 0.9rem; }
+  .topbar-page {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .topbar-home {
+    margin-left: auto;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+    padding: 0.25rem 0.7rem;
+    border-radius: 2px;
+    white-space: nowrap;
+    transition: color 0.2s, border-color 0.2s;
+    text-decoration: none;
+  }
+  .topbar-home:hover { color: var(--green); border-color: var(--green); text-decoration: none; }
+
+  /* ── LAYOUT ── */
+  .layout {
+    display: flex;
+    flex: 1;
+    margin-top: 52px;
+  }
+
+  /* ── LEFT SIDEBAR (nav) ── */
+  .sidebar {
+    width: var(--nav-w);
+    flex-shrink: 0;
+    position: sticky;
+    top: 52px;
+    height: calc(100vh - 52px);
+    overflow-y: auto;
+    border-right: 1px solid var(--border);
+    background: var(--bg2);
+    padding: 1.5rem 0;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+
+  .nav-section-title {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    padding: 0.9rem 1.2rem 0.4rem;
+  }
+  .nav-section-title:not(:first-child) { margin-top: 0.5rem; }
+
+  .nav-link {
+    display: block;
+    padding: 0.32rem 1.2rem;
+    font-size: 0.82rem;
+    color: var(--text-dim);
+    transition: color 0.15s, background 0.15s;
+    text-decoration: none;
+    border-left: 2px solid transparent;
+  }
+  .nav-link:hover { color: var(--text); background: rgba(255,255,255,0.03); text-decoration: none; }
+  .nav-link.active {
+    color: var(--green);
+    border-left-color: var(--green);
+    background: rgba(234,105,98,0.06);
+    font-weight: 500;
+  }
+  .nav-link.sub {
+    padding-left: 2rem;
+    font-size: 0.78rem;
+  }
+  .nav-link.subsub {
+    padding-left: 2.7rem;
+    font-size: 0.75rem;
+  }
+
+  /* ── MAIN CONTENT ── */
+  .main {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    min-width: 0;
+  }
+
+  .content {
+    width: 100%;
+    max-width: var(--content-max);
+    padding: 3rem 2.5rem 5rem;
+  }
+
+  /* ── BREADCRUMB ── */
+  .breadcrumb {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    margin-bottom: 2.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  .breadcrumb a { color: var(--text-dim); text-decoration: none; }
+  .breadcrumb a:hover { color: var(--teal); }
+  .breadcrumb span { color: var(--border-hi); }
+
+  /* ── DISCLAIMER ── */
+  .disclaimer {
+    background: rgba(240,165,0,0.06);
+    border: 1px solid rgba(240,165,0,0.2);
+    border-left: 3px solid var(--amber);
+    border-radius: 3px;
+    padding: 1rem 1.2rem;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    margin-bottom: 2.5rem;
+    line-height: 1.6;
+  }
+  .disclaimer strong { color: var(--amber); }
+
+  /* ── HEADINGS ── */
+  h1 {
+    font-family: var(--sans);
+    font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+    font-weight: 300;
+    color: var(--text-hi);
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.02em;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid var(--border);
+  }
+  h2 {
+    font-family: var(--sans);
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: var(--text-hi);
+    margin: 2.5rem 0 0.9rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid var(--border);
+    letter-spacing: -0.01em;
+  }
+  h3 {
+    font-family: var(--sans);
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text);
+    margin: 1.8rem 0 0.6rem;
+  }
+  h4 {
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--teal);
+    margin: 1.4rem 0 0.5rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .anchor-link {
+    color: var(--border-hi);
+    margin-left: 0.4rem;
+    font-size: 0.8em;
+    text-decoration: none;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  h2:hover .anchor-link,
+  h3:hover .anchor-link { opacity: 1; }
+
+  /* ── BODY TEXT ── */
+  p { margin-bottom: 1rem; color: var(--text); }
+  p:last-child { margin-bottom: 0; }
+
+  strong { color: var(--text-hi); font-weight: 600; }
+  em { color: var(--amber); font-style: italic; }
+  code {
+    font-family: var(--mono);
+    font-size: 0.82em;
+    background: rgba(255,255,255,0.06);
+    padding: 0.15em 0.4em;
+    border-radius: 3px;
+    color: var(--text-hi);
+  }
+
+  /* ── EQUATIONS ── */
+  .eq {
+    font-family: var(--mono);
+    font-size: 0.88rem;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--teal);
+    padding: 0.9rem 1.2rem;
+    margin: 1.2rem 0;
+    border-radius: 3px;
+    overflow-x: auto;
+    color: var(--text-hi);
+    white-space: pre;
+    line-height: 1.5;
+  }
+  .eq-label {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    margin-bottom: 0.3rem;
+  }
+
+  /* ── TABLES ── */
+  .table-wrap { overflow-x: auto; margin: 1.5rem 0; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.83rem;
+    font-family: var(--mono);
+  }
+  thead tr { background: var(--bg2); }
+  th {
+    text-align: left;
+    padding: 0.6rem 0.9rem;
+    color: var(--teal);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border-hi);
+    white-space: nowrap;
+  }
+  td {
+    padding: 0.55rem 0.9rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    vertical-align: top;
+  }
+  tbody tr:hover td { background: rgba(255,255,255,0.02); }
+  .table-caption {
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    font-style: italic;
+    margin-top: 0.5rem;
+  }
+
+  /* ── FIGURE ── */
+  figure {
+    margin: 1.8rem 0;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .figure-placeholder {
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 0.6rem;
+    color: var(--text-dim);
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    background: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 10px,
+      rgba(255,255,255,0.015) 10px,
+      rgba(255,255,255,0.015) 20px
+    );
+  }
+  .figure-icon { font-size: 1.6rem; opacity: 0.3; }
+  figcaption {
+    padding: 0.7rem 1rem;
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    border-top: 1px solid var(--border);
+    font-style: italic;
+  }
+  figcaption strong { color: var(--text-dim); font-style: normal; font-weight: 500; }
+
+  /* ── CALLOUT BOXES ── */
+  .callout {
+    padding: 1rem 1.2rem;
+    border-radius: 3px;
+    margin: 1.4rem 0;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    border-left: 3px solid;
+  }
+  .callout-title {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+  .callout.info {
+    background: rgba(0,163,112,0.07);
+    border-color: var(--teal);
+    color: var(--text);
+  }
+  .callout.info .callout-title { color: var(--teal); }
+  .callout.warning {
+    background: rgba(240,165,0,0.07);
+    border-color: var(--amber);
+    color: var(--text);
+  }
+  .callout.warning .callout-title { color: var(--amber); }
+  .callout.tip {
+    background: rgba(234,105,98,0.07);
+    border-color: var(--green);
+    color: var(--text);
+  }
+  .callout.tip .callout-title { color: var(--green); }
+  .callout.success {
+    background: rgba(0,163,112,0.1);
+    border-color: var(--teal);
+    color: var(--text);
+  }
+  .callout.success .callout-title { color: var(--teal); }
+
+  /* ── DIVIDER ── */
+  hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+
+  /* ── PREV / NEXT ── */
+  .page-nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+  .page-nav-link {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding: 0.9rem 1.2rem;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    background: var(--bg2);
+    min-width: 180px;
+    flex: 1;
+    max-width: 48%;
+    text-decoration: none;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .page-nav-link:hover { border-color: var(--green); background: var(--bg3); text-decoration: none; }
+  .page-nav-link.next { text-align: right; }
+  .page-nav-dir {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .page-nav-title {
+    font-size: 0.88rem;
+    color: var(--text-hi);
+    font-weight: 500;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 1.2rem 2.5rem;
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    color: var(--text-dim);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  /* ── RIGHT TOC ── */
+  .toc {
+    width: 210px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 52px;
+    height: calc(100vh - 52px);
+    overflow-y: auto;
+    padding: 2rem 1rem;
+    border-left: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+  .toc-title {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 0.8rem;
+  }
+  .toc-link {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    padding: 0.25rem 0;
+    text-decoration: none;
+    transition: color 0.15s;
+    border-left: 2px solid transparent;
+    padding-left: 0.6rem;
+  }
+  .toc-link:hover { color: var(--text); text-decoration: none; }
+  .toc-link.active { color: var(--green); border-left-color: var(--green); }
+  .toc-link.sub { padding-left: 1.3rem; font-size: 0.72rem; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 1100px) {
+    .toc { display: none; }
+  }
+  @media (max-width: 768px) {
+    .sidebar { display: none; }
+    .content { padding: 2rem 1.2rem 4rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <span class="topbar-brand">Tomide Abidakun</span>
+  <span class="topbar-sep">/</span>
+  <span class="topbar-page">Project Title</span>
+  <a class="topbar-home" href="index.html">← Portfolio</a>
+</div>
+
+<div class="layout">
+
+  <!-- LEFT SIDEBAR -->
+  <nav class="sidebar">
+    <div class="nav-section-title">Navigation</div>
+    <a class="nav-link" href="index.html">Home</a>
+
+    <div class="nav-section-title">Projects</div>
+    <a class="nav-link active" href="#">Project One</a>
+    <a class="nav-link" href="#">Project Two</a>
+    <a class="nav-link" href="#">Project Three</a>
+    <a class="nav-link" href="#">Project Four</a>
+    <a class="nav-link" href="#">Project Five</a>
+    <a class="nav-link" href="#">Project Six</a>
+
+    <div class="nav-section-title">On This Page</div>
+    <a class="nav-link sub" href="#prerequisites">Prerequisites</a>
+    <a class="nav-link sub" href="#introduction">Introduction</a>
+    <a class="nav-link sub" href="#design">Design Procedure</a>
+    <a class="nav-link subsub" href="#sizing">Sizing</a>
+    <a class="nav-link subsub" href="#analysis">Analysis</a>
+    <a class="nav-link sub" href="#simulations">Simulations</a>
+    <a class="nav-link subsub" href="#iteration-1">Iteration 1</a>
+    <a class="nav-link subsub" href="#iteration-2">Iteration 2</a>
+    <a class="nav-link sub" href="#conclusion">Conclusion</a>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="main">
+    <article class="content">
+
+      <!-- BREADCRUMB -->
+      <div class="breadcrumb">
+        <a href="index.html">Home</a>
+        <span>/</span>
+        <a href="#">Category</a>
+        <span>/</span>
+        Project Title
+      </div>
+
+      <!-- DISCLAIMER -->
+      <div class="disclaimer">
+        <strong>Disclaimer:</strong> All circuits documented here are <strong>simulation-only designs</strong> — no physical fabrication or silicon verification has been performed. Results are based on Cadence Spectre and NGSpice simulations. These documents are shared for <strong>portfolio and demonstration purposes</strong> only.
+      </div>
+
+      <!-- TITLE -->
+      <h1>Project Title</h1>
+
+      <!-- PREREQUISITES -->
+      <h2 id="prerequisites">Prerequisites <a class="anchor-link" href="#prerequisites">¶</a></h2>
+      <p>
+        List any concepts, earlier sections, or prior designs the reader should understand before proceeding.
+        For example: this design builds on the <a href="#">Beta Multiplier Reference</a> — refer to the
+        <a href="#">Fixing Resistor Value</a> section before proceeding.
+      </p>
+
+      <!-- INTRODUCTION -->
+      <h2 id="introduction">Introduction <a class="anchor-link" href="#introduction">¶</a></h2>
+      <p>
+        Write a brief overview of what this circuit does and why it exists. Keep theory minimal —
+        link to textbooks for background. Focus on your <strong>design decisions</strong>.
+      </p>
+      <p>
+        Before we proceed, here is the schematic of [Circuit Name]:
+      </p>
+
+      <figure>
+        <div class="figure-placeholder">
+          <div class="figure-icon">⬛</div>
+          <div>Add your schematic image here<br><code>&lt;img src="schematic.png" alt="Schematic"&gt;</code></div>
+        </div>
+        <figcaption><strong>Figure-01:</strong> [Circuit Name] schematic diagram</figcaption>
+      </figure>
+
+      <h3 id="design-context">Design Context</h3>
+      <p>
+        Explain the motivation — what system is this for? What constraints does that impose?
+        e.g. "For use in an XOR DPLL, which requires a center frequency of X MHz and a linear transfer function."
+      </p>
+
+      <h3 id="design-goals">Design Considerations</h3>
+      <p>For this design, the target specifications are:</p>
+      <ul style="margin: 0.8rem 0 1rem 1.4rem; color: var(--text); line-height: 2;">
+        <li>Output voltage / frequency: <strong>X</strong></li>
+        <li>Supply voltage: <strong>1.2 V (core) / 3.3 V (I/O)</strong></li>
+        <li>Process: <strong>65 nm custom CMOS</strong></li>
+        <li>Temperature coefficient: <strong>&lt; X ppm/°C</strong></li>
+      </ul>
+      <p>This leaves us with the following things to determine:</p>
+      <ul style="margin: 0.8rem 0 1rem 1.4rem; color: var(--text); line-height: 2;">
+        <li>MOSFET sizes</li>
+        <li>Resistor / bias values</li>
+        <li>Number of stages (if applicable)</li>
+      </ul>
+
+      <!-- DESIGN PROCEDURE -->
+      <h2 id="design">Design Procedure <a class="anchor-link" href="#design">¶</a></h2>
+
+      <h3 id="sizing">Sizing</h3>
+      <p>
+        Describe how you arrived at your MOSFET sizes. Reference your characterization tables.
+        Walk through the hand calculation.
+      </p>
+
+      <div class="eq-label">Equation 1 — [Equation name]</div>
+      <div class="eq">F_osc = I_D / (N × C_tot × V_DD)</div>
+
+      <p>
+        From the characterization data, <code>C_ox,n = 561 aF</code> and <code>C_ox,p = 1.06 fF</code>.
+        Substituting into Equation 1:
+      </p>
+
+      <div class="eq-label">Equation 2</div>
+      <div class="eq">C_tot = (5/2) × (561 aF + 1.06 fF) = 4.052 fF</div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Instance</th>
+              <th>W/L (Drawn)</th>
+              <th>Actual Dimensions</th>
+              <th>Value / Comment</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>NMOS</td>
+              <td>10/1</td>
+              <td>650 nm / 65 nm</td>
+              <td>Standard digital size</td>
+            </tr>
+            <tr>
+              <td>PMOS</td>
+              <td>20/1</td>
+              <td>1.3 µm / 65 nm</td>
+              <td>Standard digital size</td>
+            </tr>
+            <tr>
+              <td>Input NMOS</td>
+              <td>66.2/1</td>
+              <td>4.3 µm / 65 nm</td>
+              <td>Wide for linear VCCS</td>
+            </tr>
+            <tr>
+              <td>R<sub>range</sub></td>
+              <td>—</td>
+              <td>—</td>
+              <td>270 kΩ</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="table-caption">Table-01: Sizes and parameter summary</div>
+      </div>
+
+      <h3 id="analysis">Analysis</h3>
+      <p>
+        Walk through your analysis. Why did you choose this approach over alternatives?
+        What tradeoffs did you make?
+      </p>
+
+      <div class="callout info">
+        <div class="callout-title">ℹ Info</div>
+        Use this for neutral supplementary information — e.g. "Input voltage range may extend past 0.4–1.0 V; this was chosen arbitrarily as a safe operating window."
+      </div>
+
+      <div class="callout warning">
+        <div class="callout-title">⚠ Warning</div>
+        Use this to flag gotchas — e.g. "Notice I haven't precisely hit the target current. Chasing an exact value is futile given process variation."
+      </div>
+
+      <div class="callout tip">
+        <div class="callout-title">💡 Tip</div>
+        Use this for insights — e.g. "Instead of re-sizing blindly, substitute an ideal current source and sweep values first to find the right range."
+      </div>
+
+      <div class="callout success">
+        <div class="callout-title">✓ Success</div>
+        Use this to call out when you've validated a result — e.g. "The output current is linear and the lower frequency limit is now correctly set."
+      </div>
+
+      <hr>
+
+      <!-- SIMULATIONS -->
+      <h2 id="simulations">Simulations <a class="anchor-link" href="#simulations">¶</a></h2>
+
+      <h3 id="iteration-1">Iteration 1 — Initial Values</h3>
+      <p>
+        Describe your first simulation run using the calculated values. What did you observe?
+        Was the result satisfactory or did it need refinement?
+      </p>
+
+      <figure>
+        <div class="figure-placeholder">
+          <div class="figure-icon">📈</div>
+          <div>Add your simulation waveform / plot here</div>
+        </div>
+        <figcaption><strong>Figure-02:</strong> Transfer function / output waveform — Iteration 1</figcaption>
+      </figure>
+
+      <p>Observations from Iteration 1:</p>
+      <ul style="margin: 0.8rem 0 1rem 1.4rem; color: var(--text); line-height: 2;">
+        <li>Result A was ...</li>
+        <li>The achieved value is <strong>X</strong>, target was <strong>Y</strong></li>
+        <li>Curve shows [non-linearity / offset / deviation] — we need to iterate</li>
+      </ul>
+
+      <h3 id="iteration-2">Iteration 2 — Adjustments</h3>
+      <p>
+        Explain what you changed, why you changed it, and how you decided by how much to change it.
+        Quantify the adjustment.
+      </p>
+
+      <figure>
+        <div class="figure-placeholder">
+          <div class="figure-icon">📈</div>
+          <div>Add your updated simulation result here</div>
+        </div>
+        <figcaption><strong>Figure-03:</strong> Transfer function — Iteration 2 (final)</figcaption>
+      </figure>
+
+      <p>
+        The new result shows <strong>[metric]</strong> of <strong>[value]</strong>, which is satisfactory.
+        Iteration stops here.
+      </p>
+
+      <!-- CONCLUSION -->
+      <h2 id="conclusion">Conclusion <a class="anchor-link" href="#conclusion">¶</a></h2>
+      <p>Final design values:</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Instance</th>
+              <th>Value</th>
+              <th>Comment</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Input NMOS</td><td>66.2/1</td><td>4.3 µm / 65 nm</td></tr>
+            <tr><td>R<sub>range</sub></td><td>270 kΩ</td><td>For low gain</td></tr>
+            <tr><td>N (stages)</td><td>7</td><td>Center freq ≈ 500 MHz</td></tr>
+          </tbody>
+        </table>
+        <div class="table-caption">Table-02: Final design summary</div>
+      </div>
+
+      <p>Achieved parameters:</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Parameter</th>
+              <th>Value</th>
+              <th>Comments</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Gain</td><td>172.79 Mrad/s·V</td><td>or 27.5 MHz/V</td></tr>
+            <tr><td>f<sub>center</sub></td><td>500.94 MHz</td><td>At V<sub>in</sub> = V<sub>DD</sub>/2</td></tr>
+            <tr><td>Output range</td><td>16.5 MHz</td><td>495.5 MHz to 512 MHz</td></tr>
+            <tr><td>V<sub>in</sub> range</td><td>0.4 V – 0.95 V</td><td>Linear region</td></tr>
+          </tbody>
+        </table>
+        <div class="table-caption">Table-03: Achieved parameter summary</div>
+      </div>
+
+      <!-- PAGE NAV -->
+      <div class="page-nav">
+        <a class="page-nav-link prev" href="#">
+          <span class="page-nav-dir">← Previous</span>
+          <span class="page-nav-title">Previous Project Name</span>
+        </a>
+        <a class="page-nav-link next" href="#">
+          <span class="page-nav-dir">Next →</span>
+          <span class="page-nav-title">Next Project Name</span>
+        </a>
+      </div>
+
+    </article>
+  </main>
+
+  <!-- RIGHT TOC -->
+  <aside class="toc">
+    <div class="toc-title">On This Page</div>
+    <a class="toc-link" href="#prerequisites">Prerequisites</a>
+    <a class="toc-link" href="#introduction">Introduction</a>
+    <a class="toc-link sub" href="#design-context">Design Context</a>
+    <a class="toc-link sub" href="#design-goals">Design Considerations</a>
+    <a class="toc-link" href="#design">Design Procedure</a>
+    <a class="toc-link sub" href="#sizing">Sizing</a>
+    <a class="toc-link sub" href="#analysis">Analysis</a>
+    <a class="toc-link" href="#simulations">Simulations</a>
+    <a class="toc-link sub" href="#iteration-1">Iteration 1</a>
+    <a class="toc-link sub" href="#iteration-2">Iteration 2</a>
+    <a class="toc-link" href="#conclusion">Conclusion</a>
+  </aside>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <span>© 2026 Tomide Abidakun · Electrical Engineer</span>
+  <span>Licensed under CC BY 4.0</span>
+</footer>
+
+<script>
+  // Highlight active TOC link on scroll
+  const tocLinks = document.querySelectorAll('.toc-link');
+  const headings = document.querySelectorAll('h2[id], h3[id]');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        tocLinks.forEach(l => l.classList.remove('active'));
+        const active = document.querySelector(`.toc-link[href="#${entry.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-52px 0px -70% 0px' });
+
+  headings.forEach(h => observer.observe(h));
+</script>
+
+</body>
+</html>
