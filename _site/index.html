@@ -1,445 +1,767 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arunpandian A — Analog IC Design Engineer</title>
+<meta name="description" content="Analog IC design portfolio of Arunpandian A — 65nm custom CMOS circuits including bandgap references, rail-to-rail op-amps, bias circuits, and ring oscillators.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    
+  :root {
+    --bg:       #22191e;
+    --bg2:      #1e181a;
+    --bg3:      #33191e;
+    --border:   #ea6;
+    --green:    #ea6962;
+    --green-dim:#d3869b;
+    --green-faint: rgba(0,229,160,0.07);
+    --amber:    #f0a500;
+    --text:     #ffdab9;
+    --text-dim: #ffdab9;
+    --text-hi:  #ffdab0;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'IBM Plex Sans', sans-serif;
+  }
 
-    <link rel="stylesheet" href="/css/styles.css">
-    <link rel="stylesheet" href="/css/syntax.css">
+  html { scroll-behavior: smooth; }
 
-    <script src="/assets/js/script.js"></script>
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
 
-    
-    <title>John Doe's Portfolio</title>
-    
+  a { color: inherit; text-decoration: none; }
 
+  /* ── WAVE CANVAS ── */
+  #waveCanvas {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.13;
+  }
+
+  nav, section, footer { position: relative; z-index: 1; }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 clamp(1.5rem, 5vw, 3.5rem);
+    height: 56px;
+    background: rgba(34,25,30,0.88);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-brand {
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--green);
+    letter-spacing: 0.03em;
+  }
+  .nav-brand span { color: var(--text-dim); }
+  .nav-links {
+    display: flex; gap: 1.8rem; align-items: center;
+    list-style: none;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+  }
+  .nav-links a {
+    color: var(--text-dim);
+    transition: color 0.2s;
+    text-transform: uppercase;
+  }
+  .nav-links a:hover { color: var(--green); }
+  .nav-links .nav-cta {
+    color: var(--green);
+    border: 1px solid var(--green-dim);
+    padding: 0.3rem 0.8rem;
+    border-radius: 2px;
+    transition: background 0.2s, color 0.2s;
+  }
+  .nav-links .nav-cta:hover { background: var(--green-faint); color: var(--green); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: clamp(6rem, 12vw, 9rem) clamp(1.5rem, 10vw, 8rem) 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* oscilloscope grid background */
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,160,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,160,0.04) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .hero > * { position: relative; z-index: 1; }
+
+  .hero-eyebrow {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--green);
+    margin-bottom: 1.4rem;
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .hero-eyebrow::before {
+    content: '';
+    display: inline-block;
+    width: 2rem; height: 1px;
+    background: var(--green);
+  }
+
+  .hero h1 {
+    font-family: var(--sans);
+    font-size: clamp(2.4rem, 6vw, 4.8rem);
+    font-weight: 300;
+    line-height: 1.1;
+    color: var(--text-hi);
+    max-width: 14ch;
+    margin-bottom: 1.4rem;
+    letter-spacing: -0.02em;
+  }
+  .hero h1 em {
+    font-style: normal;
+    color: var(--green);
+    font-weight: 600;
+  }
+
+  .hero-sub {
+    max-width: 52ch;
+    color: var(--text-dim);
+    font-size: 0.95rem;
+    margin-bottom: 2.8rem;
+    line-height: 1.75;
+  }
+
+  .hero-btns {
+    display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 4rem;
+  }
+  .btn {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.65rem 1.4rem;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-block;
+  }
+  .btn-primary {
+    background: var(--green);
+    color: #080c10;
+    font-weight: 600;
+    border: 1px solid var(--green);
+  }
+  .btn-primary:hover { background: #00ffb3; border-color: #00ffb3; }
+  .btn-outline {
+    background: transparent;
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+  }
+  .btn-outline:hover { color: var(--green); border-color: var(--green-dim); }
+
+  /* Stats row */
+  .hero-stats {
+    display: flex; gap: 2.5rem; flex-wrap: wrap;
+    padding-top: 2.8rem;
+    border-top: 1px solid var(--border);
+  }
+  .stat-item { display: flex; flex-direction: column; gap: 0.2rem; }
+  .stat-val {
+    font-family: var(--mono);
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--green);
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    letter-spacing: 0.04em;
+    max-width: 20ch;
+    line-height: 1.4;
+  }
+
+  /* ── SECTIONS ── */
+  section {
+    padding: clamp(4rem, 8vw, 6rem) clamp(1.5rem, 10vw, 8rem);
+  }
+  section + section { border-top: 1px solid var(--border); }
+
+  .section-label {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--green-dim);
+    margin-bottom: 0.6rem;
+  }
+  .section-title {
+    font-family: var(--sans);
+    font-size: clamp(1.6rem, 3vw, 2.4rem);
+    font-weight: 300;
+    color: var(--text-hi);
+    margin-bottom: 3rem;
+    letter-spacing: -0.01em;
+  }
+
+  /* ── PROJECT CARDS ── */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
+    gap: 1px;
+    border: 1px solid var(--border);
+  }
+
+  .project-card {
+    background: var(--bg2);
+    padding: 1.8rem;
+    display: flex; flex-direction: column; gap: 0.9rem;
+    transition: background 0.2s;
+    position: relative;
+  }
+  .project-card:hover { background: var(--bg3); }
+  .project-card:hover .card-arrow { color: var(--green); transform: translate(2px, -2px); }
+
+  .card-meta {
+    display: flex; justify-content: space-between; align-items: flex-start;
+  }
+  .card-date {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    color: var(--text-dim);
+    letter-spacing: 0.06em;
+  }
+  .card-arrow {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    transition: color 0.2s, transform 0.2s;
+  }
+
+  .card-title {
+    font-family: var(--sans);
+    font-size: 1.05rem;
+    font-weight: 500;
+    color: var(--text-hi);
+    line-height: 1.3;
+  }
+
+  .card-desc {
+    font-size: 0.83rem;
+    color: var(--text-dim);
+    line-height: 1.65;
+    flex: 1;
+  }
+
+  .card-specs {
+    display: flex; flex-wrap: wrap; gap: 0.4rem;
+    margin-top: 0.4rem;
+  }
+  .spec-tag {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    padding: 0.2rem 0.55rem;
+    background: var(--green-faint);
+    color: var(--green-dim);
+    border: 1px solid rgba(0,229,160,0.12);
+    border-radius: 2px;
+    letter-spacing: 0.04em;
+  }
+  .spec-tag.amber {
+    background: rgba(240,165,0,0.07);
+    color: var(--amber);
+    border-color: rgba(240,165,0,0.15);
+  }
+
+  /* ── SKILLS ── */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 2rem;
+  }
+  .skill-group-title {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--green-dim);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .skill-list {
+    list-style: none;
+    display: flex; flex-direction: column; gap: 0.5rem;
+  }
+  .skill-list li {
+    font-size: 0.88rem;
+    color: var(--text);
+    display: flex; align-items: center; gap: 0.6rem;
+  }
+  .skill-list li::before {
+    content: '▸';
+    color: var(--green);
+    font-size: 0.65rem;
+    flex-shrink: 0;
+  }
+
+  /* education timeline */
+  .edu-timeline { display: flex; flex-direction: column; gap: 1.6rem; }
+  .edu-item {
+    display: grid; grid-template-columns: 7rem 1fr;
+    gap: 1.5rem;
+    padding-bottom: 1.6rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .edu-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .edu-year {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    padding-top: 0.15rem;
+    letter-spacing: 0.04em;
+  }
+  .edu-degree {
+    font-size: 0.92rem;
+    font-weight: 500;
+    color: var(--text-hi);
+    margin-bottom: 0.25rem;
+  }
+  .edu-inst {
+    font-size: 0.82rem;
+    color: var(--text-dim);
+  }
+
+  /* ── CERTS ── */
+  .certs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1px;
+    border: 1px solid var(--border);
+  }
+  .cert-card {
+    background: var(--bg2);
+    padding: 1.6rem;
+    display: flex; flex-direction: column; gap: 0.4rem;
+  }
+  .cert-issuer {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    color: var(--green-dim);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .cert-name {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text-hi);
+    margin-top: 0.3rem;
+  }
+  .cert-date {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    margin-top: 0.5rem;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2rem clamp(1.5rem, 10vw, 8rem);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .footer-copy {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    letter-spacing: 0.03em;
+  }
+  .footer-links {
+    display: flex; gap: 1.5rem;
+    list-style: none;
+  }
+  .footer-links a {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .footer-links a:hover { color: var(--green); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 640px) {
+    .nav-links { gap: 1rem; }
+    .nav-links li:not(:last-child):not(:nth-last-child(2)) { display: none; }
+    .hero-stats { gap: 1.6rem; }
+    .edu-item { grid-template-columns: 1fr; gap: 0.3rem; }
+    footer { flex-direction: column; align-items: flex-start; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #waveCanvas { display: none; }
+  }
+</style>
 </head>
 <body>
-    <!-- NAVBAR -->
-     <!-- _includes/nav.html -->
+
+<canvas id="waveCanvas"></canvas>
+
+<!-- NAV -->
 <nav>
-    <div class="left">
-        <a href="/">John Doe</a>
-    </div>
+  <div class="nav-brand">Tomide Abidakun<span></span></div>
+  <ul class="nav-links">
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#certifications">Certifications</a></li>
+    <li><a href="https://github.com/arunpandian-801/QUCS-65nm-Workspace" target="_blank">GitHb</a></li>
+<li><a href="https://github.com/TNokNom" target="_blank">GitHub</a></li>
 
-    <!-- Desktop Menu -->
-    <div class="right desktop-nav">
-        <a href="/">
-            <span>Home</span>
-        </a>
-        <a href="/projects/">
-            <span>Projects</span>
-        </a>
-        <a href="https://drive.google.com/file/d/13Z3duVzh-gguPU5r03oJVEE6rV9rd3DS/view?usp=sharing" target="_blank" rel="noopener noreferrer">
-            <span>Resume</span>
-        </a>
-    </div>
-
-    <!-- Mobile Menu Button -->
-    <button class="menu-toggle" aria-label="Toggle menu">
-        <i class="fa fa-bars fa-2x"></i>
-    </button>
-
-    <!-- Mobile Menu -->
-    <div class="mobile-nav">
-        <a href="/">
-            <span>Home</span>
-        </a>
-        <a href="/projects/">
-            <span>Projects</span>
-        </a>
-        <a href="https://drive.google.com/file/d/13Z3duVzh-gguPU5r03oJVEE6rV9rd3DS/view?usp=sharing" target="_blank" rel="noopener noreferrer">
-            <span>Resume</span>
-        </a>
-    </div>
+    <li><a href="https://www.linkedin.com/in/tomide-abidakun-598438271/" target="_blank">LinkedIn</a></li>
+    <li><a class="nav-cta" href="https://arunpandian-801.github.io/documentation-65nm-cmos/mosfet/parameters/" target="_blank">Documentation →</a></li>
+  </ul>
 </nav>
 
-     <div class="page">
-<!-- SECTION 1: Hero -->
-<section class="hero-section">
-    <div class="group">
-        <div class="text">
-            <h2>
-                I'm John 
-                
-                <span class="external-links">
-                    
-                    
-                        
-                            
-                            <a href="https://www.linkedin.com/in/aramlee1/" target="_blank">
-                                <i class="fa-brands fa-linkedin"></i>
-                            </a>
-                        
-                            
-                        
-                    
-                        
-                    
-                        
-                            
-                                <a href="https://github.com/leea2/" target="_blank">
-                                    <i class="fa-brands fa-github"></i>
-                                </a>
-                            
-                            
-                        
-                    
-                        
-                            
-                                <a href="https://stackoverflow.com/users/test/" target="_blank">
-                                    <i class="fa-brands fa-stack-overflow"></i>
-                                </a>
-                            
-                            
-                        
-                    
-                        
-                    
-                        
-                    
-                        
-                    
-                        
-                    
-                        
-                    
-                        
-                    
-                </span>
-                
-            </h2>
-            
-            <h3> headline message </h3>
-            <p> Write an awesome intro and discuss your highlights and qualification. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</p>
-            <div class="links">
-                <a href="#projects">
-                    <i class="fa-solid fa-pen"></i>
-                    <span>Projects</span>
-                </a>
-                <a href="#skills">
-                    <i class="fa-solid fa-hammer"></i>
-                    <span>Skills</span>
-                </a>
-                <a href="#contact">
-                    <i class="fa-solid fa-envelope"></i>
-                    <span>Contact Me</span>
-                </a>
-            </div>
-            
-        </div>
-        <div class="headshot">
-            <img src= ./assets/images/profile-image/avatar.jpeg alt="john doe headshot">       
-        </div>
+<!-- HERO -->
+<section class="hero" style="border-top:none;">
+  <div class="hero-eyebrow">Electrical Engineer</div>
+  <h1><br>From Idea To Reality<em></em></h1>
+  <p class="hero-sub">Designing circuits & systems — exploring semiconductor devices, fabrication processes, analog/mixed-signal design, and digital hardware.</p>
+  <div class="hero-btns">
+    <a class="btn btn-primary" href="#projects">View Projects</a>
+    <a class="btn btn-outline" href="https://github.com/arunpandian-801/QUCS-65nm-Workspace" target="_blank">GitHub / QUCS-S Workspace</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat-item">
+      <span class="stat-val"></span>
+      <span class="stat-label">Understanding of semiconductor process</span>
     </div>
-    
+    <div class="stat-item">
+      <span class="stat-label">Experience with Verilog & VHDL</span>
+    </div>
+    <div class = "stat-item">
+<span class="stat-label">Experience with Embedded Systems</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-label">Experience with analog/mixed signal simulation & layout </span>
+    </div>
+    <div class="stat-item">
+    </div>
+    <div class="stat-item">
+    </div>
+  </div>
 </section>
 
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="section-label">Work</div>
+  <h2 class="section-title">Design Projects</h2>
 
+  <div class="projects-grid">
 
-
-
-<div class="arrow"> 
-    <a href="#projects">
-        More About Me
-    <i class="fa-solid fa-angles-down"></i>
-    </a> 
-</div>
-<!-- SECTION 3: project -->
-<section id="projects" class="project-grid-section">
-    <h2>Projects</h2>
-
-    <div class="grid-container">
-        
-    <a href="/projects/demo-project/index/" class="project-link">
-        <div class="project-card">
-            
-            
-            <img src="/_projects/demo-project/project2.jpg" alt="Super Heavy Booster Catch (Demo Only) image">
-            <h3 class="project-title">Super Heavy Booster Catch (Demo Only)</h3>
-            <div class="project-skills">
-                
-                    <span class="skill">Structural analysis</span>
-                
-                    <span class="skill">Aerodynamic design</span>
-                
-                    <span class="skill">Propulsion system integration</span>
-                
-                    <span class="skill">Control Algorithem</span>
-                
-                    <span class="skill">Welding</span>
-                
-                    <span class="skill">Metal forming</span>
-                
-                    <span class="skill">Thermal simulation</span>
-                
-            </div>
-            <p class="project-description">(I have never been employed by / affiliated with SpaceX. This is for demo use only) Developing the Super Heavy booster catch project involves designing a robust launch tower with "chopstick" arms, advanced control systems for precise booster alignment, and integrating sophisticated software for real-time trajectory adjustments and structural engineering to handle immense forces.</p>
-            <button class="read-more">Read more →</button>
-        </div>
+    <a class="project-card" href="https://arunpandian-801.github.io/documentation-65nm-cmos/oscillators/csvco/" target="_blank">
+      <div class="card-meta">
+        <span class="card-date">Feb 2026</span>
+        <span class="card-arrow">↗</span>
+      </div>
+      <div class="card-title">Voltage Controlled Oscillator</div>
+      <p class="card-desc">Current-starved, 7-stage ring VCO. 500 MHz centre frequency, 172.8 Mrad/s/V tuning gain over 0.4–1.0 V control range.</p>
+      <div class="card-specs">
+        <span class="spec-tag">f₀ = 500 MHz</span>
+        <span class="spec-tag">KVCO = 172.8 Mrad/s/V</span>
+        <span class="spec-tag">1.2 V Core</span>
+        <span class="spec-tag amber">65 nm</span>
+      </div>
     </a>
 
-    <a href="/projects/sonos-teardown/sonos/" class="project-link">
-        <div class="project-card">
-            
-            
-            <img src="/_projects/sonos-teardownproject-image.webp" alt="Sonos teardown image">
-            <h3 class="project-title">Sonos teardown</h3>
-            <div class="project-skills">
-                
-                    <span class="skill">drumel</span>
-                
-                    <span class="skill">microprobing</span>
-                
-                    <span class="skill">Electronics Teardown</span>
-                
-                    <span class="skill">PCB analysis</span>
-                
-                    <span class="skill">audio system design</span>
-                
-            </div>
-            <p class="project-description">Conducted detailed teardown analysis of Sonos Era speaker, documenting internal components, driver configuration, and PCB design. Created technical documentation with photos and assembly insights for engineering reference.</p>
-            <button class="read-more">Read more →</button>
-        </div>
+    <a class="project-card" href="https://arunpandian-801.github.io/documentation-65nm-cmos/references/bgr-low-voltage/" target="_blank">
+      <div class="card-meta">
+        <span class="card-date">Jan 2026</span>
+        <span class="card-arrow">↗</span>
+      </div>
+      <div class="card-title">GPU Implementation / CPU Implementation</div>
+      <p class="card-desc">Parallel CTAT+PTAT current summation topology. 0.6 V output (~VDD/2), self-biased, 41.789 ppm/°C temperature coefficient.</p>
+      <div class="card-specs">
+        <span class="spec-tag">VREF = 0.6 V</span>
+        <span class="spec-tag">41.789 ppm/°C</span>
+        <span class="spec-tag">1.2 V supply</span>
+        <span class="spec-tag amber">65 nm</span>
+      </div>
     </a>
 
-    </div>
+    <a class="project-card" href="https://arunpandian-801.github.io/documentation-65nm-cmos/references/bgr-standard/" target="_blank">
+      <div class="card-meta">
+        <span class="card-date">Dec 2025</span>
+        <span class="card-arrow">↗</span>
+      </div>
+      <div class="card-title">Virtual Analog Synth</div>
+      <p class="card-desc">Series CTAT+PTAT voltage summation. 1.22 V silicon bandgap output, self-biased, 19.416 ppm/°C on I/O 500 nm MOSFET.</p>
+      <div class="card-specs">
+        <span class="spec-tag">VREF = 1.22 V</span>
+        <span class="spec-tag">19.416 ppm/°C</span>
+        <span class="spec-tag">3.3 V supply</span>
+        <span class="spec-tag amber">I/O 500 nm</span>
+      </div>
+    </a>
 
+    <a class="project-card" href="https://arunpandian-801.github.io/documentation-65nm-cmos/amplifiers/rtr-opamp/" target="_blank">
+      <div class="card-meta">
+        <span class="card-date">Oct 2025</span>
+        <span class="card-arrow">↗</span>
+      </div>
+      <div class="card-title">Rail-to-Rail Op-Amp</div>
+      <p class="card-desc">Folded cascode, parallel NMOS+PMOS input stages, Class AB output. Characterised across all three CMR regions under 10 kΩ ‖ 10 pF load.</p>
+      <div class="card-specs">
+        <span class="spec-tag">Gain 67.1–74.9 dB</span>
+        <span class="spec-tag">UGB 47.5–96.9 MHz</span>
+        <span class="spec-tag">PM 54°–75°</span>
+        <span class="spec-tag amber">65 nm</span>
+      </div>
+    </a>
 
- </section>
+    <a class="project-card" href="https://arunpandian-801.github.io/documentation-65nm-cmos/references/general-bias/" target="_blank">
+      <div class="card-meta">
+        <span class="card-date">Sep 2025</span>
+        <span class="card-arrow">↗</span>
+      </div>
+      <div class="card-title">General Bias Circuit</div>
+      <p class="card-desc">Derives wide swing cascode current source and sink bias voltages plus Class AB output stage bias from BMR. Supply-independent biasing for all analog blocks.</p>
+      <div class="card-specs">
+        <span class="spec-tag">Wide swing cascode</span>
+        <span class="spec-tag">Class AB Bias</span>
+        <span class="spec-tag">IBIAS = 10 µA</span>
+        <span class="spec-tag">VDD,min = 0.7 V</span>
+        <span class="spec-tag amber">65 nm</span>
+      </div>
+    </a>
 
-<section id="skills" class="skills-section">
-    <h2>Skills</h2>
-        
-    <ul class="skill-categories">
-        
-          <li>
-            <div class="skills-card">
-              <span class="category-label">3D Modeling</span>
-            
-              <ul class="skills-list">
-                
-                  <li class="skill">
-                    Onshape
-                  </li>
-                
-                  <li class="skill">
-                    Solidworks
-                  </li>
-                
-                  <li class="skill">
-                    Creo
-                  </li>
-                
-                  <li class="skill">
-                    Fusion 360 (Autodesk)
-                  </li>
-                
-                  <li class="skill">
-                    Blender (for complex shapes or animations)
-                  </li>
-                
-                  <li class="skill">
-                    Siemens NX
-                  </li>
-                
-                  <li class="skill">
-                    Inventor (Autodesk)
-                  </li>
-                
-                  <li class="skill">
-                    CATIA (Dassault Systèmes)
-                  </li>
-                
-                </ul>
-            </div>
-            
-          </li> 
-        
-          <li>
-            <div class="skills-card">
-              <span class="category-label">Prototyping</span>
-            
-              <ul class="skills-list">
-                
-                  <li class="skill">
-                    SLA
-                  </li>
-                
-                  <li class="skill">
-                    CNC
-                  </li>
-                
-                  <li class="skill">
-                    FDM
-                  </li>
-                
-                  <li class="skill">
-                    SLS
-                  </li>
-                
-                  <li class="skill">
-                    DMLS
-                  </li>
-                
-                  <li class="skill">
-                    PolyJet Printing
-                  </li>
-                
-                  <li class="skill">
-                    Vacuum Casting
-                  </li>
-                
-                  <li class="skill">
-                    Laser Cutting
-                  </li>
-                
-                  <li class="skill">
-                    Water Jet Cutting
-                  </li>
-                
-                  <li class="skill">
-                    Arduino / Raspberry Pi
-                  </li>
-                
-                  <li class="skill">
-                    Breadboarding for circuit testing
-                  </li>
-                
-                </ul>
-            </div>
-            
-          </li> 
-        
-          <li>
-            <div class="skills-card">
-              <span class="category-label">Design Standards / Practices</span>
-            
-              <ul class="skills-list">
-                
-                  <li class="skill">
-                    GD&T ASME Y14
-                  </li>
-                
-                  <li class="skill">
-                    ISO fits and tolerances
-                  </li>
-                
-                  <li class="skill">
-                    PLM (PTC Windchill / Arena)
-                  </li>
-                
-                </ul>
-            </div>
-            
-          </li> 
-        
-          <li>
-            <div class="skills-card">
-              <span class="category-label">PCB Design</span>
-            
-              <ul class="skills-list">
-                
-                  <li class="skill">
-                    Altium Designer
-                  </li>
-                
-                  <li class="skill">
-                    Altium
-                  </li>
-                
-                  <li class="skill">
-                    Eagle
-                  </li>
-                
-                  <li class="skill">
-                    KiCad
-                  </li>
-                
-                </ul>
-            </div>
-            
-          </li> 
-        
-          <li>
-            <div class="skills-card">
-              <span class="category-label">Problem Solving / Risk Management</span>
-            
-              <ul class="skills-list">
-                
-                  <li class="skill">
-                    Root Cause Analysis (e.g., 5 Whys, Fishbone Diagram)
-                  </li>
-                
-                  <li class="skill">
-                    DFMEA / PFMEA
-                  </li>
-                
-                  <li class="skill">
-                    Six Sigma methodologies
-                  </li>
-                
-                  <li class="skill">
-                    Shain Red-X
-                  </li>
-                
-                </ul>
-            </div>
-            
-          </li> 
-        
+    <a class="project-card" href="https://arunpandian-801.github.io/documentation-65nm-cmos/references/bmr/" target="_blank">
+      <div class="card-meta">
+        <span class="card-date">Sep 2025</span>
+        <span class="card-arrow">↗</span>
+      </div>
+      <div class="card-title">Reinforcement Learning  GUI</div>
+      <p class="card-desc">Resistor-based, self-biased supply-independent current reference. Generates 10 µA bias current for all subsequent analog blocks.</p>
+      <div class="card-specs">
+        <span class="spec-tag">IBIAS = 10 µA</span>
+        <span class="spec-tag">VDD,min = 0.7 V</span>
+        <span class="spec-tag">Supply Independent</span>
+        <span class="spec-tag amber">65 nm</span>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-label">Background</div>
+  <h2 class="section-title">Skills &amp; Education</h2>
+
+  <div class="skills-grid" style="margin-bottom: 3rem;">
+    <div>
+      <div class="skill-group-title">EDA Tools</div>
+      <ul class="skill-list">
+        <li>NGSPICE</li>
+        <li>KLAYOUT</li>
+        <li>MAGIC VLSI</li>
+        <li>Cadence Virtuoso</li>
+        <li>LTSPICE</li>
+        <li>KiCad</li>
+        <li>OpenLane</li>
+        <li>Xilinix Vivado</li>
+
       </ul>
+    </div>
+    <div>
+      <div class="skill-group-title">Highlighted Projects</div>
+      <ul class="skill-list">
+        <li>Rail-to-Rail Op-Amp</li>
+        <li>Ring Oscillator / VCO</li>
+        <li>Virtual Analog Synthesizer</li>
 
+      </ul>
+    </div>
+    <div>
+      <div class="skill-group-title">Process Nodes</div>
+      <ul class="skill-list">
+        <li>Skywater PDK 65 nm Custom CMOS</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="skill-group-title" style="margin-bottom:1.4rem;">Education</div>
+  <div class="edu-timeline">
+    <div class="edu-item">
+      <span class="edu-year">2021 – 2025</span>
+      <div>
+<div class="edu-degree"><span style="color: #ea6962;">Bachelors:</span> Kennesaw State University - Electrical Engineering/Applied Mathematics</div>
+      </div>
+    </div>
+    <div class="edu-item">
+      <span class="edu-year">2026 – Present </span>
+      <div>
+       <div class="edu-degree"><span style="color: #ea6962;">Masters:</span> John Hopkins University - Electrical Engineering </div>
+    </div>
+  </div>
 </section>
-<!-- SECTION 4: Contact-->
-<section id="contact" class= "contact-section">
-    <h2>Contact</h2>
 
-    <div class="group">
-      
-        <form action="https://formspree.io/f/https://formspree.io/f/{8-digit key}" method="POST">
-            <label for="name">Name</label>
-            <input type="text" id="name">
+<!-- CERTIFICATIONS -->
+<section id="certifications">
+  <div class="section-label">Credentials</div>
+  <h2 class="section-title">Certifications</h2>
 
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email">
-
-            <label for="message">Message</label>
-            <textarea id="message" cols = "30" rows="10" name="message"></textarea>
-
-            <button type="submit">Send Message</button>
-        </form>
+  <div class="certs-grid">
+    <div class="cert-card">
+    <div class="cert-card">
+      <div class="cert-issuer">Cadence</div>
+      <div class="cert-name">Analog Design Analysis and Simulation Domain Training</div>
+      <div class="cert-date"> Aug-Dec 2025</div>
     </div>
-  </section>
-</div>
+  </div>
+</section>
 
-     
-</body>
-
-    <footer>
-    <div class="footer-content">
-        <div class="links">
-            <a href="/">
-                <span>Home</span>
-            </a>
-            <a href="/projects/">
-                <span>Projects</span>
-            </a>
-            <a href=https://drive.google.com/file/d/13Z3duVzh-gguPU5r03oJVEE6rV9rd3DS/view?usp=sharing target="_blank" rel="noopener noreferrer">
-                <span>Resume</span>
-            </a>
-        </div>
-    </div>
-    <div class="license">
-        <span>For any question or suggestion for the portfolio template or projects, reach out <a class="help" href="https://createdotshow.com"> Here</a> </span>
-        <p>FreeToEngineer portfolio template © 2025 by Aram Lee is licensed under <a href="https://creativecommons.org/licenses/by/4.0/?ref=chooser-v1">CC BY 4.0</a></p>
-    </div>
+<!-- FOOTER -->
+<footer>
+  <p class="footer-copy">© 2026 Tomide Abidakun · Electrical Engineer</p>
+  <ul class="footer-links">
+    <li><a href="https://www.linkedin.com/in/arun-analog-ic-des/" target="_blank">LinkedIn</a></li>
+    <li><a href="https://github.com/arunpandian-801/QUCS-65nm-Workspace" target="_blank">GitHub</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="https://arunpandian-801.github.io/documentation-65nm-cmos/mosfet/parameters/" target="_blank">Docs</a></li>
+  </ul>
 </footer>
+
+<script>
+(function () {
+  const canvas = document.getElementById('waveCanvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, t = 0;
+
+  const waves = [
+    {
+      label: 'SINE',
+      color: '#ea6962',
+      fn: (px, amp, freq, phase) => Math.sin(px * freq + phase) * amp
+    },
+    {
+      label: 'TRIANGLE',
+      color: '#00a370',
+      fn: (px, amp, freq, phase) => {
+        const p = ((px * freq + phase) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2);
+        return (p < Math.PI ? (p / Math.PI) * 2 - 1 : 1 - ((p - Math.PI) / Math.PI) * 2) * amp;
+      }
+    },
+    {
+      label: 'SQUARE',
+      color: '#f0a500',
+      fn: (px, amp, freq, phase) => (Math.sin(px * freq + phase) >= 0 ? 1 : -1) * amp
+    },
+    {
+      label: 'SAWTOOTH',
+      color: '#ffdab9',
+      fn: (px, amp, freq, phase) => {
+        const p = ((px * freq + phase) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2);
+        return ((p / (Math.PI * 2)) * 2 - 1) * amp;
+      }
+    }
+  ];
+
+  function resize() {
+    W = canvas.width  = window.innerWidth  * devicePixelRatio;
+    H = canvas.height = window.innerHeight * devicePixelRatio;
+    canvas.style.width  = window.innerWidth  + 'px';
+    canvas.style.height = window.innerHeight + 'px';
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+
+    const bandH = H / 4;
+    const freq  = 0.011 * devicePixelRatio;
+    const speed = 0.022;
+
+    waves.forEach((wave, i) => {
+      const cy  = bandH * i + bandH / 2;
+      const amp = bandH * 0.33;
+
+      // band divider
+      if (i > 0) {
+        ctx.save();
+        ctx.setLineDash([4 * devicePixelRatio, 10 * devicePixelRatio]);
+        ctx.strokeStyle = 'rgba(234,170,102,0.18)';
+        ctx.lineWidth   = 1 * devicePixelRatio;
+        ctx.beginPath();
+        ctx.moveTo(0, bandH * i);
+        ctx.lineTo(W, bandH * i);
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      // centreline
+      ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+      ctx.lineWidth   = 1 * devicePixelRatio;
+      ctx.beginPath();
+      ctx.moveTo(0, cy);
+      ctx.lineTo(W, cy);
+      ctx.stroke();
+
+      // waveform
+      ctx.beginPath();
+      ctx.strokeStyle = wave.color;
+      ctx.lineWidth   = 1.6 * devicePixelRatio;
+      ctx.lineJoin    = 'round';
+
+      for (let px = 0; px <= W; px++) {
+        const y = cy + wave.fn(px, amp, freq, -t);
+        px === 0 ? ctx.moveTo(px, y) : ctx.lineTo(px, y);
+      }
+      ctx.stroke();
+
+      // label
+      ctx.font      = `${10 * devicePixelRatio}px 'IBM Plex Mono', monospace`;
+      ctx.fillStyle = wave.color;
+      ctx.globalAlpha = 0.55;
+      ctx.fillText(wave.label, 14 * devicePixelRatio, bandH * i + 20 * devicePixelRatio);
+      ctx.globalAlpha = 1;
+    });
+
+    t += speed;
+    requestAnimationFrame(draw);
+  }
+
+  window.addEventListener('resize', resize);
+  resize();
+  draw();
+})();
+</script>
+</body>
 </html>
